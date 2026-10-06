@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>URLSentinel · phishing inspector</title>
+<style>
+  :root{--ink:#22242d;--paper:#f3f1e6;--olive:#9c913f;--sand:#cfbb83;--teal:#397893;--red:#b8432f;--muted:#7a7a6c}
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;background:var(--ink);color:var(--paper);font:16px/1.5 Georgia,"Times New Roman",serif;display:grid;place-items:center;padding:32px}
+  main{width:min(820px,100%)}
+  .brand{font:700 14px/1 ui-monospace,Consolas,monospace;letter-spacing:.3em;color:var(--sand);text-transform:uppercase}
+  h1{font-size:clamp(40px,7vw,76px);line-height:.95;margin:.25em 0 .4em;font-weight:700;letter-spacing:-.02em}
+  h1 em{color:var(--olive);font-style:italic}
+  form{display:flex;gap:0;border-bottom:3px solid var(--sand)}
+  input{flex:1;background:transparent;border:0;color:var(--paper);font:18px ui-monospace,Consolas,monospace;padding:16px 4px;outline:none}
+  input::placeholder{color:var(--muted)}
+  button{background:var(--olive);color:var(--ink);border:0;font:700 14px ui-monospace,Consolas,monospace;letter-spacing:.2em;padding:0 26px;cursor:pointer;text-transform:uppercase}
+  button:hover{background:var(--sand)}
+  .examples{margin-top:14px;font:14px ui-monospace,Consolas,monospace;color:var(--muted)}
+  .examples a{color:var(--sand);cursor:pointer;margin-right:14px;text-decoration:underline dotted}
+  #card{margin-top:44px;background:var(--paper);color:var(--ink);padding:36px;position:relative;display:none;min-height:240px}
+  #card.show{display:block;animation:rise .35s ease-out}
+  .url{font:14px ui-monospace,Consolas,monospace;word-break:break-all;color:var(--muted);max-width:70%}
+  .prob{font-size:64px;font-weight:700;line-height:1;margin:18px 0 6px}
+  .bar{height:10px;background:#dcd8c4;max-width:60%}
+  .bar i{display:block;height:100%;width:0;transition:width .8s cubic-bezier(.2,.8,.2,1)}
+  ul{list-style:none;padding:0;margin:26px 0 0}
+  li{padding:8px 0;border-top:1px solid #dcd8c4;display:flex;gap:12px;align-items:baseline}
+  li b{font:700 12px ui-monospace,Consolas,monospace;letter-spacing:.15em;min-width:46px}
+  .stamp{position:absolute;right:36px;top:40px;border:5px double currentColor;padding:10px 18px;font:700 26px ui-monospace,Consolas,monospace;letter-spacing:.15em;transform:rotate(-12deg);opacity:0}
+  #card.show .stamp{animation:stamp .45s .25s cubic-bezier(.3,1.6,.5,1) forwards}
+  @keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}to{opacity:.9;transform:rotate(-12deg) scale(1)}}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}}
+  footer{margin-top:28px;font:14px ui-monospace,Consolas,monospace;color:var(--muted)}
+  @media (max-width:600px){.stamp{position:static;display:inline-block;margin-bottom:14px}.url,.bar{max-width:100%}}
+</style>
+</head>
+<body>
+<main>
+  <div class="brand">URLSentinel / v1.0</div>
+  <h1>Is this link<br><em>lying</em> to you?</h1>
+  <form id="f">
+    <input id="u" placeholder="paste a URL…" autocomplete="off" spellcheck="false" aria-label="URL to inspect">
+    <button>Inspect</button>
+  </form>
+  <div class="examples">try:
+    <a>https://github.com/features</a>
+    <a>https://www.robiox.com.ps/users/884221804/profile</a>
+    <a>https://innstagrram.netlify.app/</a>
+  </div>
+  <section id="card" aria-live="polite">
+    <div class="stamp" id="stamp"></div>
+    <div class="url" id="url"></div>
+    <div class="prob" id="prob"></div>
+    <div class="bar"><i id="bar"></i></div>
+    <ul id="reasons"></ul>
+  </section>
+  <footer>NumPy neural network trained on real phishing data · the link is never opened</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const colors = {SAFE:"var(--teal)", SUSPICIOUS:"var(--olive)", PHISHING:"var(--red)"};
+async function inspect(url){
+  const r = await fetch("/api/scan", {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({url})});
+  const d = await r.json();
+  if(d.error){ alert(d.error); return; }
+  const card = $("card"); card.classList.remove("show"); void card.offsetWidth;
+  const c = colors[d.verdict];
+  $("stamp").textContent = d.verdict; $("stamp").style.color = c;
+  $("url").textContent = d.url;
+  $("prob").textContent = Math.round(d.phishing_probability*100) + "% risk";
+  $("bar").style.width = "0"; $("bar").style.background = c;
+  setTimeout(()=> $("bar").style.width = (d.phishing_probability*100)+"%", 60);
+  $("reasons").replaceChildren(...d.reasons.map(x=>{
+    const li=document.createElement("li"), b=document.createElement("b"), s=document.createElement("span");
+    b.textContent = x.direction==="risk" ? "RISK" : "OK"; b.style.color = x.direction==="risk" ? "var(--red)" : "var(--teal)";
+    s.textContent = x.reason; li.append(b,s); return li;
+  }));
+  card.classList.add("show");
+}
+$("f").onsubmit = e => { e.preventDefault(); const v=$("u").value.trim(); if(v) inspect(v); };
+document.querySelectorAll(".examples a").forEach(a => a.onclick = () => { $("u").value=a.textContent; inspect(a.textContent); });
+</script>
+</body>
+</html>

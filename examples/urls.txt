@@ -1,0 +1,12 @@
+# one URL per line, lines starting with # are ignored
+# phishing examples below are real, taken from the OpenPhish community feed (never opened by the tool)
+https://github.com/features
+https://docs.python.org/3/library/
+https://www.paypal.com/signin
+https://www.roblox.com/discover
+https://www.robiox.com.ps/users/884221804/profile
+https://innstagrram.netlify.app/
+https://securce-chasce.vercel.app/index.html
+https://garantibankasi.intengo.com/login.intengo?cid=8485
+http://www.ehay.item.com.login.secures-wr8wsvzt.oph.gkb.net/
+https://u.to/roblox-com-users-8300446069-profile/KGerIg

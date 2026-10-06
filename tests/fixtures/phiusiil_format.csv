@@ -1,0 +1,4 @@
+﻿FILENAME,URL,URLLength,Title,label
+a.txt,https://www.python.org,22,Welcome to Python.org,1
+b.txt,https://innstagrram.netlify.app/,32,Instagram,0
+c.txt,https://www.python.org,22,duplicate,1
