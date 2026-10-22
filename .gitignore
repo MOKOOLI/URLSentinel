@@ -8,3 +8,5 @@ data/
 *.egg-info/
 build/
 dist/
+venv/ 
+data.csv 
