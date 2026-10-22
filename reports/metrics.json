@@ -1,0 +1,76 @@
+{
+  "source": "data.csv",
+  "n_urls": 15071,
+  "n_phishing": 9062,
+  "n_test": 2156,
+  "audit": [
+    {
+      "check": "starts with https://",
+      "phishing": 1.0,
+      "legitimate": 0.3716092527874854,
+      "warning": true
+    },
+    {
+      "check": "has www.",
+      "phishing": 1.0,
+      "legitimate": 0.5579963388250957,
+      "warning": true
+    },
+    {
+      "check": "has a path beyond '/'",
+      "phishing": 0.0,
+      "legitimate": 0.2036944583125312,
+      "warning": false
+    },
+    {
+      "check": "has a query string",
+      "phishing": 0.0,
+      "legitimate": 0.048593776002662674,
+      "warning": false
+    }
+  ],
+  "models": {
+    "NumPyMLP": {
+      "accuracy": 0.9935064935064936,
+      "precision": 0.9922600619195047,
+      "recall": 0.9968895800933126,
+      "f1": 0.9945694336695112,
+      "roc_auc": 0.9975237303587708,
+      "confusion": {
+        "tp": 1282,
+        "tn": 860,
+        "fp": 10,
+        "fn": 4
+      },
+      "train_seconds": 3.7
+    },
+    "LogisticRegression": {
+      "accuracy": 0.9791280148423006,
+      "precision": 0.9675960813865863,
+      "recall": 0.9984447900466563,
+      "f1": 0.9827784156142366,
+      "roc_auc": 0.9903903219463364,
+      "confusion": {
+        "tp": 1284,
+        "tn": 827,
+        "fp": 43,
+        "fn": 2
+      },
+      "train_seconds": 0.1
+    },
+    "RandomForest": {
+      "accuracy": 0.9958256029684601,
+      "precision": 0.994577846630519,
+      "recall": 0.9984447900466563,
+      "f1": 0.9965075669383003,
+      "roc_auc": 0.9989824100391483,
+      "confusion": {
+        "tp": 1284,
+        "tn": 863,
+        "fp": 7,
+        "fn": 2
+      },
+      "train_seconds": 0.29
+    }
+  }
+}
